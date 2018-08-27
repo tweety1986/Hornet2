@@ -20,9 +20,14 @@
                 <li><a href="{{ url_for('login') }}">Login</a></li>
 	            <li><a href="{{ url_for('profil') }}">Profil</a></li>
                 <li><a href="{{ url_for('child') }}">Child</a></li>
+                {% if session %}
+                <li><a href="{{ url_for('logout') }}">Wyloguj</a></li>
+                {% endif %}
             </ul>
+
         </nav></strong>
 </div>
+
 </header>
 
 <div class="container-fluid">

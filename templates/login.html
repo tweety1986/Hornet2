@@ -6,7 +6,7 @@
     <form class="login-form" action="" method="post">
         <input type="text" placeholder="Username" name="username" value="{{request.form.username }}">
          <input type="password" placeholder="Password" name="password" value="{{request.form.password }}">
-        <input class="btn btn-green" type="submit" value="Login">
+        <button type="submit" value="Login">Zaloguj</button>
       </form>
       {% if error %}
         <p class="error"><strong>Error:</strong> {{ error }}
