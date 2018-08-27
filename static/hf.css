@@ -1,0 +1,38 @@
+
+.row{
+  height:auto;
+  border-radius:5px;
+  border-style: double;
+  background-color: bisque;
+  padding-bottom: 10px;
+  padding-top: 10px;
+  margin-top: 10px;
+}
+.container {
+  background-color:gray;
+  border-style:double;
+  border-radius:10px;
+  margin-top: 20%;
+  padding-bottom: 30px;
+}
+button a:hover {
+ padding-bottom:5px;
+}
+
+.middle {
+  margin-left: 5%;
+  width: 90%;
+  margin-right: 5%;
+}
+.container h3 {
+  color: whitesmoke;
+  font-size: 1.6em;
+}
+.container h4 {
+  color: whitesmoke;
+  font-size: 1.2em;
+}
+.middle1 {
+    width: 90%;
+  margin: 5% 5% 5% 5%;
+}

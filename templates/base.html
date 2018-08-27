@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="pl" xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta charset="UTF-8">
+    <title>{{the_title}}</title>
+  <link rel="icon" type="image/png" href="/static/ico/clock.ico">
+   	<link rel="stylesheet" href="/static/css/main.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://fonts.googleapis.com/css?family=VT323&amp;subset=latin-ext" rel="stylesheet">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+</head>
+<body>
+
+<header>
+<div class="container">
+    <h1 class="logo">BAZA PRZEDSZKOLAKA</h1>
+        <strong><nav>
+            <ul class="menu">
+                <li><a href="{{ url_for('index') }}">Home</a></li>
+                <li><a href="{{ url_for('login') }}">Login</a></li>
+	            <li><a href="{{ url_for('profil') }}">Profil</a></li>
+                <li><a href="{{ url_for('child') }}">Child</a></li>
+            </ul>
+        </nav></strong>
+</div>
+</header>
+
+<div class="container-fluid">
+    <div class="intro">
+        <h1>Witaj w bazie przedszkolaka!</h1>
+    </div>
+    {%block body%}
+
+    {% endblock %}
+
+
+<div class="footer">
+  <p>Copyright by Grzegorz Wolyniec     design by Tweety86</p>
+</div>
+<!-- LIBRARY -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js">
+</script>
+<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js">
+</script>
+<script src="http://code.jquery.com/jquery-3.2.1.min.js">
+</script>
+</body>
+</html>
