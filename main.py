@@ -58,11 +58,12 @@ def login():
 
     return render_template('login.html', error=error)
 
+
 @app.route("/logout")
 def logout():
     session['logged_in'] = False
-    app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(minutes=0)
     return redirect(url_for('index'))
+
 
 @app.route('/child')
 def child():
