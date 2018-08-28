@@ -98,6 +98,7 @@ h3 {
     text-align: center;
     box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.2), 0 5px 5px 0 rgba(0, 0, 0, 0.24);
 }
+
 .form input {
     font-family: "Roboto", sans-serif;
     outline: 0;
@@ -172,6 +173,22 @@ h3 {
 .container .info span .fa {
     color: #EF3B3A;
 }
+
+.metek {
+    position: relative;
+    z-index: 0;
+    background: #FFFFFF;
+    max-width: 800px;
+    margin: 0 auto 100px;
+    padding: 45px;
+    text-align: center;
+    box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.2), 0 5px 5px 0 rgba(0, 0, 0, 0.24);
+}
+.mietek h1{
+
+    color:white;
+}
+
 .footer {
   color:grey;
   font-size: 20px;
@@ -180,5 +197,9 @@ h3 {
   width: 100%;
   left: 0;
   bottom: 0;
+}
+
+.intro h1 {
+    color:white;
 
 }

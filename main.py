@@ -40,7 +40,12 @@ def profil():
     if not session.get('logged_in'):
         return redirect(url_for('login'))
     else:
-        return render_template("profil.html", the_title='BAZA PRZEDSZKOLAKA')
+        with sqlite3.connect("static/user.db") as db:
+            cursor = db.cursor()
+        cursor.execute('SELECT pesel, name, surname, birth, grupa FROM dzieci')
+        data = cursor.fetchall()
+        db.commit()
+    return render_template("profil.html", data=data, the_title='BAZA PRZEDSZKOLAKA')
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -78,12 +83,11 @@ def child():
         cursor.execute(
             'INSERT INTO dzieci (pesel, name, surname, birth, grupa) VALUES (?, ?, ?, ?, ?)',
             (
-                request.form.get('pesel', type = int),
-                request.form.get('name', type = str),
-                request.form.get('surname', type = str),
-                request.form.get('birth', type = str),
-                request.form.get('grupa', type = str)
-
+                request.form.get('pesel', type=int),
+                request.form.get('name', type=str),
+                request.form.get('surname', type=str),
+                request.form.get('birth', type=str),
+                request.form.get('grupa', type=str)
             )
         )
         db.commit()
