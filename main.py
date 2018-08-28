@@ -7,7 +7,7 @@ import hashlib
 
 app = Flask(__name__)
 app.secret_key = os.urandom(24)
-app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(minutes=2)
+app.permanent_session_lifetime = timedelta(minutes=5)
 
 
 def check_password(hashed_password, user_password):
@@ -62,15 +62,33 @@ def login():
 @app.route("/logout")
 def logout():
     session['logged_in'] = False
+    session.clear()
     return redirect(url_for('index'))
 
 
-@app.route('/child')
+@app.route('/child', methods=['GET', 'POST'])
 def child():
     if not session.get('logged_in'):
         return redirect(url_for('login'))
-    else:
-        return render_template("child.html", the_title='BAZA PRZEDSZKOLAKA')
+    if request.method == 'POST':
+
+        with sqlite3.connect("static/user.db") as db:
+            cursor = db.cursor()
+
+        cursor.execute(
+            'INSERT INTO dzieci (pesel, name, surname, birth, grupa) VALUES (?, ?, ?, ?, ?)',
+            (
+                request.form.get('pesel', type = int),
+                request.form.get('name', type = str),
+                request.form.get('surname', type = str),
+                request.form.get('birth', type = str),
+                request.form.get('grupa', type = str)
+
+            )
+        )
+        db.commit()
+        return redirect(url_for('child'))
+    return render_template("child.html", the_title='BAZA PRZEDSZKOLAKA')
 
 
 @app.route('/secret')

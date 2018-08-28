@@ -18,16 +18,15 @@
             <ul class="menu">
                 <li><a href="{{ url_for('index') }}">Home</a></li>
                 <li><a href="{{ url_for('login') }}">Login</a></li>
+                 {% if session %}
 	            <li><a href="{{ url_for('profil') }}">Profil</a></li>
                 <li><a href="{{ url_for('child') }}">Child</a></li>
-                {% if session %}
                 <li><a href="{{ url_for('logout') }}">Wyloguj</a></li>
                 {% endif %}
             </ul>
 
         </nav></strong>
 </div>
-
 </header>
 
 <div class="container-fluid">
@@ -38,7 +37,7 @@
 
     {% endblock %}
 
-
+</div>
 <div class="footer">
   <p>Copyright by Grzegorz Wolyniec     design by Tweety86</p>
 </div>
