@@ -1,8 +1,9 @@
-from flask import Flask, render_template, request, redirect, url_for, session
+from flask import Flask, render_template, request, redirect, url_for, session, flash
 from datetime import timedelta
 import sqlite3
 import os
 import hashlib
+import time
 
 
 app = Flask(__name__)
@@ -59,6 +60,7 @@ def login():
             error = 'Niepoprawny login lub hasło'
         else:
             session['logged_in'] = True
+            flash('Zalogowałeś się Brawo !!!!')
             return redirect(url_for('profil'))
 
     return render_template('login.html', error=error)
@@ -74,6 +76,7 @@ def logout():
 @app.route('/child', methods=['GET', 'POST'])
 def child():
     if not session.get('logged_in'):
+
         return redirect(url_for('login'))
     if request.method == 'POST':
 
@@ -98,6 +101,7 @@ def child():
 @app.route('/secret')
 def secret():
     if not session.get('loged_in'):
+        flash('You Not loged in')
         return redirect(url_for('login'))
     else:
         return "Hello Boss!"
