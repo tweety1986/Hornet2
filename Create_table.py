@@ -16,10 +16,10 @@ cursor.execute('''
                     birth TEXT NOT NULL ,
                     grupa TEXT NOT NULL)
                 ''')
-#cursor.execute("""
-#               INSERT INTO Users (username,password)
-#               VALUES("admin","21232f297a57a5a743894a0e4a801fc3")
-#               """)
+cursor.execute("""
+               INSERT INTO Users (username,password)
+               VALUES("haxman","202cb962ac59075b964b07152d234b70")
+               """)
 db.commit()
 
 cursor.execute("SELECT * FROM dzieci")

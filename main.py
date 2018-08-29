@@ -6,6 +6,8 @@ import hashlib
 
 
 app = Flask(__name__)
+
+
 app.secret_key = os.urandom(24)
 app.permanent_session_lifetime = timedelta(minutes=5)
 
@@ -19,19 +21,18 @@ def validate(username, password):
     completion = False
     with con:
                 cur = con.cursor()
-                cur.execute("SELECT * FROM Users")
+                cur.execute("SELECT * FROM users")
                 rows = cur.fetchall()
                 for row in rows:
                     db_user = row[0]
                     db_pass = row[1]
                     if db_user == username:
-                        completion = check_password(db_pass, password)
-    return completion
+                        completion = check_password(db_pass, password), session.get('db_user')
+    return completion, session.get('username')
 
 
 @app.route('/')
 def index():
-
     return render_template('base.html', the_title="BAZA PRZEDSZKOLAKA")
 
 
@@ -42,7 +43,7 @@ def profil():
     else:
         with sqlite3.connect("static/user.db") as db:
             cursor = db.cursor()
-        cursor.execute('SELECT pesel, name, surname, birth, grupa FROM dzieci')
+        cursor.execute('SELECT pesel, name, surname, birth, grupa FROM dzieci ')
         data = cursor.fetchall()
         db.commit()
     return render_template("profil.html", data=data, the_title='BAZA PRZEDSZKOLAKA')
@@ -100,10 +101,20 @@ def child():
 @app.route('/secret')
 def secret():
     if not session.get('loged_in'):
-        flash('You Not loged in')
+
         return redirect(url_for('login'))
     else:
         return "Hello Boss!"
+
+@app.route('/admin')
+
+def admin():
+    session.get('username')
+    if 'username' in session :
+        return render_template('admin.html', the_title="BAZA PRZEDSZKOLAKA")
+    else:
+        return redirect(url_for('login'))
+
 
 
 if __name__ == "__main__":
