@@ -1,4 +1,5 @@
 from flask import Flask, render_template, request, redirect, url_for, session, flash
+
 from datetime import timedelta
 import sqlite3
 import os
@@ -27,8 +28,8 @@ def validate(username, password):
                     db_user = row[0]
                     db_pass = row[1]
                     if db_user == username:
-                        completion = check_password(db_pass, password), session.get('db_user')
-    return completion, session.get('username')
+                        completion = check_password(db_pass, password)
+    return completion
 
 
 @app.route('/')
@@ -55,14 +56,15 @@ def login():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
+
         completion = validate(username, password)
         if completion is False:
             error = 'Niepoprawny login lub hasło'
         else:
             session['logged_in'] = True
-            flash('Zalogowałeś się Brawo !!!!')
+            flash(username)
             return redirect(url_for('profil'))
-
+        session['logged_in'] = username
     return render_template('login.html', error=error)
 
 
@@ -106,15 +108,13 @@ def secret():
     else:
         return "Hello Boss!"
 
-@app.route('/admin')
 
+@app.route('/admin', methods=['GET', 'POST'])
 def admin():
-    session.get('username')
-    if 'username' in session :
+    if login.username == admin:
         return render_template('admin.html', the_title="BAZA PRZEDSZKOLAKA")
     else:
         return redirect(url_for('login'))
-
 
 
 if __name__ == "__main__":
