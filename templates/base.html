@@ -13,14 +13,15 @@
 
 <header>
 <div class="container">
-    <h1 class="logo">BAZA PRZEDSZKOLAKA</h1>
+    <h1 class="logo">BAZA PRZEDSZKOLAKA </h1>
         <strong><nav>
             <ul class="menu">
                 <li><a href="{{ url_for('index') }}">Home</a></li>
                 {% if session %}
-                <li><a href="{{ url_for('admin') }}">Admin</a></li>
+                <li><a href="{{ url_for('admins') }}">Admin</a></li>
 	            <li><a href="{{ url_for('profil') }}">Profil</a></li>
                 <li><a href="{{ url_for('child') }}">Child</a></li>
+                <li><a href="{{ url_for('register') }}">Add_user</a></li>
                 <li><a href="{{ url_for('logout') }}">Wyloguj</a></li>
                 {% else %}
                 <li><a href="{{ url_for('login') }}">Login</a></li>

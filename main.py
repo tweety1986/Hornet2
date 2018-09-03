@@ -1,8 +1,8 @@
-from flask import Flask, render_template, request, redirect, url_for, session, flash
-
+from flask import Flask, render_template, request, redirect, url_for, session,escape
 from datetime import timedelta
 import sqlite3
 import os
+from werkzeug.security import generate_password_hash, check_password_hash
 import hashlib
 
 
@@ -12,9 +12,13 @@ app = Flask(__name__)
 app.secret_key = os.urandom(24)
 app.permanent_session_lifetime = timedelta(minutes=5)
 
+def hash_passwd(hashed_password):
+    hashed_password = hashlib.sha3_512().hexdigest()
+    hashed_password = 'b' + hashed_password
+    return hashed_password
 
 def check_password(hashed_password, user_password):
-    return hashed_password == hashlib.md5(user_password.encode()).hexdigest()
+    return hashed_password == hashlib.sha3_512(user_password.encode()).hexdigest()
 
 
 def validate(username, password):
@@ -22,7 +26,7 @@ def validate(username, password):
     completion = False
     with con:
                 cur = con.cursor()
-                cur.execute("SELECT * FROM users")
+                cur.execute("SELECT username, password FROM users")
                 rows = cur.fetchall()
                 for row in rows:
                     db_user = row[0]
@@ -32,7 +36,7 @@ def validate(username, password):
     return completion
 
 
-@app.route('/')
+@app.route('/',methods=['GET', 'POST'])
 def index():
     return render_template('base.html', the_title="BAZA PRZEDSZKOLAKA")
 
@@ -54,21 +58,20 @@ def profil():
 def login():
     error = None
     if request.method == 'POST':
+        session['username'] = request.form['username']
         username = request.form['username']
         password = request.form['password']
-
         completion = validate(username, password)
         if completion is False:
             error = 'Niepoprawny login lub hasło'
         else:
             session['logged_in'] = True
-            flash(username)
             return redirect(url_for('profil'))
-        session['logged_in'] = username
     return render_template('login.html', error=error)
 
 
 @app.route("/logout")
+
 def logout():
     session['logged_in'] = False
     session.clear()
@@ -108,13 +111,39 @@ def secret():
     else:
         return "Hello Boss!"
 
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    if not session.get('logged_in'):
+        return redirect(url_for('login'))
 
-@app.route('/admin', methods=['GET', 'POST'])
-def admin():
-    if login.username == admin:
-        return render_template('admin.html', the_title="BAZA PRZEDSZKOLAKA")
+    if request.method == 'POST':
+
+        with sqlite3.connect("static/user.db") as db:
+            cursor = db.cursor()
+
+        cursor.execute(
+            'INSERT INTO users (username, password, email) VALUES (?, ?, ?)',
+            (
+                request.form.get('username', type=str),
+                request.form.get('email', type=str),
+                hash_passwd(request.form.get('password', type=str))
+            )
+        )
+        db.commit()
+        return redirect(url_for('register'))
+    return render_template("register.html", the_title='BAZA PRZEDSZKOLAKA')
+
+
+
+
+@app.route('/admins',methods=['GET'])
+def admins():
+    if 'username' in session:
+        return 'Hey, {}!'.format(escape(session['username']))
     else:
         return redirect(url_for('login'))
+
+
 
 
 if __name__ == "__main__":
