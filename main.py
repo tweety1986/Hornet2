@@ -3,7 +3,6 @@ from datetime import timedelta
 import sqlite3
 import os
 import hashlib
-import time
 
 
 app = Flask(__name__)
@@ -11,8 +10,12 @@ app.secret_key = os.urandom(24)
 app.permanent_session_lifetime = timedelta(minutes=5)
 
 
+def hash_passwd(hashed_password):
+    hash_pass = hashlib.sha3_512(hashed_password.encode()).hexdigest()
+    return hash_pass
+
 def check_password(hashed_password, user_password):
-    return hashed_password == hashlib.md5(user_password.encode()).hexdigest()
+    return hashed_password == hashlib.sha3_512(user_password.encode()).hexdigest()
 
 
 def validate(username, password):
@@ -23,8 +26,8 @@ def validate(username, password):
                 cur.execute("SELECT * FROM Users")
                 rows = cur.fetchall()
                 for row in rows:
-                    db_user = row[0]
-                    db_pass = row[1]
+                    db_user = row[1]
+                    db_pass = row[2]
                     if db_user == username:
                         completion = check_password(db_pass, password)
     return completion
@@ -59,12 +62,19 @@ def login():
         if completion is False:
             error = 'Niepoprawny login lub hasło'
         else:
+
             session['logged_in'] = True
-            flash('Zalogowałeś się Brawo !!!!')
-            return redirect(url_for('profil'))
+            session['logged_in'] = username
+            info = "ole" + " " + username
+            flash(info)
 
+            with sqlite3.connect("static/user.db") as db:
+                cursor = db.cursor()
+            cursor.execute('SELECT pesel, name, surname, birth, grupa FROM dzieci')
+            data = cursor.fetchall()
+            db.commit()
+            return render_template('profil.html', error=error,data=data, the_chuj=username)
     return render_template('login.html', error=error)
-
 
 @app.route("/logout")
 def logout():
@@ -96,6 +106,28 @@ def child():
         db.commit()
         return redirect(url_for('child'))
     return render_template("child.html", the_title='BAZA PRZEDSZKOLAKA')
+
+
+@app.route('/register', methods=['GET', 'POST'])
+
+def register():
+
+    if request.method == 'POST':
+
+        with sqlite3.connect("static/user.db") as db:
+            cursor = db.cursor()
+
+        cursor.execute(
+            'INSERT INTO users (username, password, email) VALUES (?, ?, ?)',
+            (
+                request.form.get('username', type=str),
+                hash_passwd(request.form.get('password', type=str)),
+                request.form.get('email', type=str))
+        )
+        db.commit()
+        return redirect(url_for('register'))
+    return render_template("register.html", the_title='BAZA PRZEDSZKOLAKA')
+
 
 
 @app.route('/secret')

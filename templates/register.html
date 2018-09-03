@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% block body %}
+
+
+    <div class="form">
+        <h3>Dodaj przedszkolaka:</h3>
+        <form class="login-form" action="" method="post">
+
+            <input type="text" placeholder="usrname" name="username" value="{{request.form.username}}"/>
+            <input type="password" placeholder="password" name="password" value="{{ request.form.password }}"/>
+            <input type="Text" placeholder="email" name="email" value="{{request.form.email}}"/>
+
+            <button type="submit" value="dodaj">DODAJ</button>
+        </form>
+    </div>
+
+
+
+{% endblock %}

@@ -16,8 +16,12 @@
     <h1 class="logo">BAZA PRZEDSZKOLAKA</h1>
         <strong><nav>
             <ul class="menu">
+                {% if session %}
+                <li><a href="#">Witaj: {{the_chuj}}</a></li>
+                {% endif %}
                 <li><a href="{{ url_for('index') }}">Home</a></li>
                 {% if session %}
+                <li><a href="{{ url_for('register') }}">Add_user</a></li>
 	            <li><a href="{{ url_for('profil') }}">Profil</a></li>
                 <li><a href="{{ url_for('child') }}">Child</a></li>
                 <li><a href="{{ url_for('logout') }}">Wyloguj</a></li>
@@ -27,6 +31,11 @@
             </ul>
 
         </nav></strong>
+    <div>
+        {% if session %}
+        {{the_chuj}}
+        {% endif %}
+    </div>
 </div>
 
 </header>

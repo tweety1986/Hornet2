@@ -5,8 +5,10 @@ with sqlite3.connect("static/user.db") as db:
 
 cursor.execute('''
     CREATE TABLE IF NOT EXISTS Users(
-    username TEXT PRIMARY KEY NOT NULL,
-    password TEXT NOT NULL)
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    username TEXT NOT NULL,
+    password TEXT NOT NULL,
+    email TEXT NOT NULL)
 ''')
 cursor.execute('''
                     CREATE TABLE IF NOT EXISTS dzieci(
@@ -16,14 +18,17 @@ cursor.execute('''
                     birth TEXT NOT NULL ,
                     grupa TEXT NOT NULL)
                 ''')
-#cursor.execute("""
-#               INSERT INTO Users (username,password)
-#               VALUES("admin","21232f297a57a5a743894a0e4a801fc3")
-#               """)
+cursor.execute('''
+               INSERT INTO Users (username, password, email)
+               VALUES(
+               "admin", 
+               "4626093d4bc650544f61f471d24f9e17232205882e5e8d5ed3968623713e2dcc8d2aa6dd0d33240c79ca37e41e6904401f753da49ba9a2a08ef7d508fcbd5361",
+               "gwolyniec25@gmail.com");
+               ''')
 db.commit()
 
-cursor.execute("SELECT * FROM dzieci")
-print(cursor.fetchall())
+#cursor.execute("SELECT * FROM dzieci")
+#print(cursor.fetchall())
 
 cursor.execute("SELECT * FROM users")
 print(cursor.fetchall())
