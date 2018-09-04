@@ -22,7 +22,7 @@ cursor.execute('''
                INSERT INTO Users (username, password, email)
                VALUES(
                "admin", 
-               "ba69f73cca23a9ac5c8b567dc185a756e97c982164fe25859e0d1dcc1475c80a615b2123af1f5f94c11e3e9402c3ac558f500199d95b6d3e301758586281dcd26",
+               "4626093d4bc650544f61f471d24f9e17232205882e5e8d5ed3968623713e2dcc8d2aa6dd0d33240c79ca37e41e6904401f753da49ba9a2a08ef7d508fcbd5361",
                "gwolyniec25@gmail.com");
                ''')
 db.commit()

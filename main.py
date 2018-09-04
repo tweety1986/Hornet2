@@ -1,21 +1,18 @@
-from flask import Flask, render_template, request, redirect, url_for, session,escape
+from flask import Flask, render_template, request, redirect, url_for, session, flash
 from datetime import timedelta
 import sqlite3
 import os
-from werkzeug.security import generate_password_hash, check_password_hash
 import hashlib
 
 
 app = Flask(__name__)
-
-
 app.secret_key = os.urandom(24)
 app.permanent_session_lifetime = timedelta(minutes=5)
 
+
 def hash_passwd(hashed_password):
-    hashed_password = hashlib.sha3_512().hexdigest()
-    hashed_password = 'b' + hashed_password
-    return hashed_password
+    hash_pass = hashlib.sha3_512(hashed_password.encode()).hexdigest()
+    return hash_pass
 
 def check_password(hashed_password, user_password):
     return hashed_password == hashlib.sha3_512(user_password.encode()).hexdigest()
@@ -26,18 +23,19 @@ def validate(username, password):
     completion = False
     with con:
                 cur = con.cursor()
-                cur.execute("SELECT username, password FROM users")
+                cur.execute("SELECT * FROM Users")
                 rows = cur.fetchall()
                 for row in rows:
-                    db_user = row[0]
-                    db_pass = row[1]
+                    db_user = row[1]
+                    db_pass = row[2]
                     if db_user == username:
                         completion = check_password(db_pass, password)
     return completion
 
 
-@app.route('/',methods=['GET', 'POST'])
+@app.route('/')
 def index():
+
     return render_template('base.html', the_title="BAZA PRZEDSZKOLAKA")
 
 
@@ -48,7 +46,7 @@ def profil():
     else:
         with sqlite3.connect("static/user.db") as db:
             cursor = db.cursor()
-        cursor.execute('SELECT pesel, name, surname, birth, grupa FROM dzieci ')
+        cursor.execute('SELECT pesel, name, surname, birth, grupa FROM dzieci')
         data = cursor.fetchall()
         db.commit()
     return render_template("profil.html", data=data, the_title='BAZA PRZEDSZKOLAKA')
@@ -58,20 +56,27 @@ def profil():
 def login():
     error = None
     if request.method == 'POST':
-        session['username'] = request.form['username']
         username = request.form['username']
         password = request.form['password']
         completion = validate(username, password)
         if completion is False:
             error = 'Niepoprawny login lub hasło'
         else:
+
             session['logged_in'] = True
-            return redirect(url_for('profil'))
+            session['logged_in'] = username
+            info = "ole" + " " + username
+            flash(info)
+
+            with sqlite3.connect("static/user.db") as db:
+                cursor = db.cursor()
+            cursor.execute('SELECT pesel, name, surname, birth, grupa FROM dzieci')
+            data = cursor.fetchall()
+            db.commit()
+            return render_template('profil.html', error=error,data=data, the_chuj=username)
     return render_template('login.html', error=error)
 
-
 @app.route("/logout")
-
 def logout():
     session['logged_in'] = False
     session.clear()
@@ -103,18 +108,9 @@ def child():
     return render_template("child.html", the_title='BAZA PRZEDSZKOLAKA')
 
 
-@app.route('/secret')
-def secret():
-    if not session.get('loged_in'):
-
-        return redirect(url_for('login'))
-    else:
-        return "Hello Boss!"
-
 @app.route('/register', methods=['GET', 'POST'])
+
 def register():
-    if not session.get('logged_in'):
-        return redirect(url_for('login'))
 
     if request.method == 'POST':
 
@@ -125,9 +121,8 @@ def register():
             'INSERT INTO users (username, password, email) VALUES (?, ?, ?)',
             (
                 request.form.get('username', type=str),
-                request.form.get('email', type=str),
-                hash_passwd(request.form.get('password', type=str))
-            )
+                hash_passwd(request.form.get('password', type=str)),
+                request.form.get('email', type=str))
         )
         db.commit()
         return redirect(url_for('register'))
@@ -135,15 +130,13 @@ def register():
 
 
 
-
-@app.route('/admins',methods=['GET'])
-def admins():
-    if 'username' in session:
-        return 'Hey, {}!'.format(escape(session['username']))
-    else:
+@app.route('/secret')
+def secret():
+    if not session.get('loged_in'):
+        flash('You Not loged in')
         return redirect(url_for('login'))
-
-
+    else:
+        return "Hello Boss!"
 
 
 if __name__ == "__main__":
