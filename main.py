@@ -6,7 +6,7 @@ import os
 import hashlib
 
 
-ALLOWED_EXTENSIONS = {'txt', 'pdf', 'jpg', 'png', 'jpeg', 'gif', 'doc'}
+ALLOWED_EXTENSIONS = {'txt', 'pdf', 'jpg', 'png', 'jpeg', 'gif', 'doc', 'rar'}
 
 app = Flask(__name__)
 app.secret_key = os.urandom(24)
