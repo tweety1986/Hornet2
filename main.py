@@ -1,18 +1,27 @@
-from flask import Flask, render_template, request, redirect, url_for, session, flash
+from flask import Flask, render_template, request, redirect, url_for, flash, session
+from werkzeug.utils import secure_filename
 from datetime import timedelta
 import sqlite3
 import os
 import hashlib
 
 
+ALLOWED_EXTENSIONS = {'txt', 'pdf', 'jpg', 'png', 'jpeg', 'gif', 'doc'}
+
 app = Flask(__name__)
 app.secret_key = os.urandom(24)
 app.permanent_session_lifetime = timedelta(minutes=5)
 
 
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+
 def hash_passwd(hashed_password):
     hash_pass = hashlib.sha3_512(hashed_password.encode()).hexdigest()
     return hash_pass
+
 
 def check_password(hashed_password, user_password):
     return hashed_password == hashlib.sha3_512(user_password.encode()).hexdigest()
@@ -35,21 +44,25 @@ def validate(username, password):
 
 @app.route('/')
 def index():
-
-    return render_template('base.html', the_title="BAZA PRZEDSZKOLAKA")
+    if 'username' in session:
+        username = session['username']
+        return render_template('base.html', info=username, the_title="BAZA PRZEDSZKOLAKA")
+    else:
+        return render_template('base.html', the_title="BAZA PRZEDSZKOLAKA")
 
 
 @app.route('/profil')
 def profil():
-    if not session.get('logged_in'):
-        return redirect(url_for('login'))
-    else:
+    if 'username' in session:
+        username = session['username']
         with sqlite3.connect("static/user.db") as db:
             cursor = db.cursor()
-        cursor.execute('SELECT pesel, name, surname, birth, grupa FROM dzieci')
-        data = cursor.fetchall()
+            cursor.execute('SELECT pesel, name, surname, birth, grupa FROM dzieci')
+            data = cursor.fetchall()
         db.commit()
-    return render_template("profil.html", data=data, the_title='BAZA PRZEDSZKOLAKA')
+        return render_template("profil.html", data=data, the_title='BAZA PRZEDSZKOLAKA', info=username)
+    else:
+        return redirect('login')
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -62,81 +75,92 @@ def login():
         if completion is False:
             error = 'Niepoprawny login lub hasło'
         else:
-
-            session['logged_in'] = True
-            session['logged_in'] = username
+            session['username'] = request.form['username']
             info = "ole" + " " + username
             flash(info)
 
-            with sqlite3.connect("static/user.db") as db:
-                cursor = db.cursor()
-            cursor.execute('SELECT pesel, name, surname, birth, grupa FROM dzieci')
-            data = cursor.fetchall()
-            db.commit()
-            return render_template('profil.html', error=error,data=data, the_chuj=username)
+            return render_template('base.html', error=error, info=username)
     return render_template('login.html', error=error)
+
 
 @app.route("/logout")
 def logout():
-    session['logged_in'] = False
+    session.pop('username', None)
     session.clear()
     return redirect(url_for('index'))
 
 
 @app.route('/child', methods=['GET', 'POST'])
 def child():
-    if not session.get('logged_in'):
+    if 'username' in session:
+        username = session['username']
+        if request.method == 'POST':
+            with sqlite3.connect("static/user.db") as db:
+                cursor = db.cursor()
 
-        return redirect(url_for('login'))
-    if request.method == 'POST':
-
-        with sqlite3.connect("static/user.db") as db:
-            cursor = db.cursor()
-
-        cursor.execute(
-            'INSERT INTO dzieci (pesel, name, surname, birth, grupa) VALUES (?, ?, ?, ?, ?)',
-            (
-                request.form.get('pesel', type=int),
-                request.form.get('name', type=str),
-                request.form.get('surname', type=str),
-                request.form.get('birth', type=str),
-                request.form.get('grupa', type=str)
+            cursor.execute(
+                'INSERT INTO dzieci (pesel, name, surname, birth, grupa) VALUES (?, ?, ?, ?, ?)',
+                (
+                    request.form.get('pesel', type=int),
+                    request.form.get('name', type=str),
+                    request.form.get('surname', type=str),
+                    request.form.get('birth', type=str),
+                    request.form.get('grupa', type=str)
+                )
             )
-        )
-        db.commit()
-        return redirect(url_for('child'))
-    return render_template("child.html", the_title='BAZA PRZEDSZKOLAKA')
+            db.commit()
+            return redirect(url_for('child'))
+        return render_template("child.html", the_title='BAZA PRZEDSZKOLAKA', info=username)
+    return redirect(url_for('login'))
 
 
 @app.route('/register', methods=['GET', 'POST'])
-
 def register():
+    if 'username' in session:
+        username = session['username']
+        if request.method == 'POST':
+            with sqlite3.connect("static/user.db") as db:
+                cursor = db.cursor()
 
-    if request.method == 'POST':
-
-        with sqlite3.connect("static/user.db") as db:
-            cursor = db.cursor()
-
-        cursor.execute(
-            'INSERT INTO users (username, password, email) VALUES (?, ?, ?)',
-            (
-                request.form.get('username', type=str),
-                hash_passwd(request.form.get('password', type=str)),
-                request.form.get('email', type=str))
-        )
-        db.commit()
-        return redirect(url_for('register'))
-    return render_template("register.html", the_title='BAZA PRZEDSZKOLAKA')
+            cursor.execute(
+                'INSERT INTO users (username, password, email) VALUES (?, ?, ?)',
+                (
+                    request.form.get('username', type=str),
+                    hash_passwd(request.form.get('password', type=str)),
+                    request.form.get('email', type=str))
+            )
+            db.commit()
+            return redirect(url_for('register'))
+        return render_template("register.html", the_title='BAZA PRZEDSZKOLAKA', info=username)
+    return redirect(url_for('login'))
 
 
-
-@app.route('/secret')
-def secret():
-    if not session.get('loged_in'):
-        flash('You Not loged in')
-        return redirect(url_for('login'))
+@app.route('/admin')
+def admin():
+    if session['username'] == 'admin':
+        username = session['username']
+        return render_template('admin.html', info=username)
     else:
-        return "Hello Boss!"
+        return redirect(url_for('login')), flash('Nie jestes zalogowany!!  Prosze sie wczesniej zalogować')
+
+
+@app.route('/upload', methods=['GET', 'POST'])
+def upload_file():
+    if session['username'] == 'admin':
+        username = session['username']
+        if request.method == 'POST':
+            if 'file' not in request.files:
+                flash('No file part')
+                return redirect(request.url)
+            file = request.files['file']
+            if file.filename == '':
+                flash('No selected file')
+                return redirect(request.url)
+            if file and allowed_file(file.filename):
+                filename = secure_filename(file.filename)
+                file.save(os.path.join('static/storage', filename))
+                return redirect(url_for('index', filename=filename)), flash('Upload file successfull')
+        return render_template('upload.html', info=username)
 
 
 if __name__ == "__main__":
