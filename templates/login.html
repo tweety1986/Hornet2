@@ -5,7 +5,8 @@
   <div class="form">
     <form class="login-form" action="" method="post">
         <input type="text" placeholder="Username" name="username" value="{{request.form.username }}">
-         <input type="password" placeholder="Password" name="password" value="{{request.form.password }}">
+        <input type="password" placeholder="Password" name="password" value="{{request.form.password }}">
+        <input type="text" placeholder="Admin, Nauczyciec, Rodzic" name="grupa" value="{{request.form.grupa}}">
         <button type="submit" value="Login">Zaloguj</button>
       </form>
       {% if error %}
