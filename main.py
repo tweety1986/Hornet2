@@ -70,7 +70,15 @@ def profil():
             cursor.execute('SELECT pesel, name, surname, birth, grupa FROM dzieci')
             data = cursor.fetchall()
         db.commit()
-        return render_template("profil.html", data=data, the_title='BAZA PRZEDSZKOLAKA', info=username, grupa=check_grupa(username) )
+
+        def find_parent(pesel):
+            with sqlite3.connect("static/user.db") as db:
+                cursor = db.cursor()
+                pesel = int(pesel)
+                cursor.execute('SELECT * FROM dzieci WHERE person_id = ?', (pesel,))
+                print(cursor.fetchall())
+
+    return render_template("profil.html", data=data, the_title='BAZA PRZEDSZKOLAKA', info=username, grupa=check_grupa(username) )
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -114,9 +122,9 @@ def child():
                 cursor = db.cursor()
 
             cursor.execute(
-                'INSERT INTO dzieci (pesel, name, surname, birth, grupa) VALUES (?, ?, ?, ?, ?)',
+                'INSERT INTO dzieci (person_id, name, surname, birth, grupa) VALUES (?, ?, ?, ?, ?)',
                 (
-                    request.form.get('pesel', type=int),
+                    request.form.get('person_id', type=int),
                     request.form.get('name', type=str),
                     request.form.get('surname', type=str),
                     request.form.get('birth', type=str),

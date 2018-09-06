@@ -5,7 +5,7 @@
     <div class="form">
         <h3>Dodaj przedszkolaka:</h3>
         <form class="login-form" action="" method="post">
-            <input type="number" placeholder="PESEL dziecka" name="pesel" value="{{request.form.pesel}}"/>
+            <input type="number" placeholder="PESEL dziecka" name="person_id" value="{{request.form.person_id }}"/>
             <input type="text" placeholder="Imię dziecka" name="name" value="{{request.form.name}}"/>
             <input type="text" placeholder="Nazwisko dziecka" name="surname" value="{{ request.form.surname }}"/>
             <input type="Text"  data-date-format="DD-MMMM-YYYY"  placeholder="Data urodzenia" name="birth" value="{{request.form.birth}}"/>
