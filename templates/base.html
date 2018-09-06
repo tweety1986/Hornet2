@@ -55,29 +55,25 @@
             {% endif %}
         </ul>
       </div>
-      <!--/.nav-collapse -->
     </div>
-    <!--/.container-fluid -->
   </nav>
 </div>
-
 </header>
         {% with messages = get_flashed_messages() %}
         {%if messages%}
             {% for message in messages %}
                 <div class="alert alert-success alert-dismissible" role="alert">
-                <button type="button" class="close" data-dismiss="alert" aria-label="Close">Close</button>
-                    <h2>{{ message }}</h2>
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><b>X</b></button>
+                    <h3>{{ message }}</h3>
                 </div>
             {% endfor %}
         {% endif %}
     {% endwith %}
     {%block body%}
-
     {% endblock %}
 
 <div class="footer">
-  <p>Copyright by Grzegorz Wolyniec     design by Tweety86</p>
+  <p>Copyright by Grzegorz Wolyniec design by Tweety86</p>
 </div>
 <!-- LIBRARY -->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js">
