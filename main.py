@@ -56,7 +56,7 @@ def validate(username, password):
 def index():
     if 'username' in session:
         username = session['username']
-        return render_template('base.html', the_title="BAZA PRZEDSZKOLAKA", grupa=check_grupa(username))
+        return render_template('base.html', the_title="BAZA PRZEDSZKOLAKA", info=username , grupa=check_grupa(username))
     else:
         return render_template('base.html', the_title="BAZA PRZEDSZKOLAKA")
 
@@ -85,8 +85,15 @@ def login():
         else:
             session['username'] = request.form['username']
             username = session['username']
-            info = "Witaj" + " " + check_grupa(username)+"u"
-            flash(info)
+            if check_grupa(username) == 'admin':
+                info = "Witaj" + " " + check_grupa(username)+"ie"
+                flash(info)
+            if check_grupa(username) == 'nauczyciel':
+                info = "Witaj" + " " + check_grupa(username) + "u"
+                flash(info)
+            if check_grupa(username) == 'rodzic':
+                info = "Witaj" + " " + check_grupa(username) + "u"
+                flash(info)
             return render_template('base.html', error=error, info=username, grupa=check_grupa(username))
     return render_template('login.html', error=error)
 
@@ -146,7 +153,7 @@ def register():
 def admin():
     if session['username'] == 'admin':
         username = session['username']
-        return render_template('admin.html', grupa=check_grupa(username))
+        return render_template('admin.html', grupa=check_grupa(username), info=username)
     else:
         session.pop('username', None)
         session.clear()

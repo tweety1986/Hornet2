@@ -27,7 +27,6 @@
           {% else %}
           <h1>Baza Przedszkolaka</h1>
           {% endif %}
-
       </div>
       <div id="navbar3" class="navbar-collapse collapse">
         <ul class="nav navbar-nav navbar-right">
@@ -47,14 +46,12 @@
                     <li><a href="{{ url_for('child') }}">Child</a></li>
                     <li><a href="{{ url_for('admin') }}">Admin</a></li>
                     <li><a href="{{ url_for('upload_file') }}">send file</a></li>
-                    <li><a href="{{ url_for('child') }}">Chuj</a></li>
-
             {% endif %}
             {% if session['username'] %}
              <li><a href="{{ url_for('logout') }}">Wyloguj</a></li>
             {% else %}
-            <li><a href="{{ url_for('index') }}">Home</a></li>
-            <li><a href="{{ url_for('login') }}">Login</a></li>
+                <li><a href="{{ url_for('index') }}">Home</a></li>
+                <li><a href="{{ url_for('login') }}">Login</a></li>
             {% endif %}
         </ul>
       </div>
