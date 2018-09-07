@@ -10,7 +10,7 @@ ALLOWED_EXTENSIONS = {'txt', 'pdf', 'jpg', 'png', 'jpeg', 'gif', 'doc', 'rar'}
 
 app = Flask(__name__)
 app.secret_key = os.urandom(24)
-app.permanent_session_lifetime = timedelta(minutes=5)
+app.permanent_session_lifetime = timedelta(minutes=10)
 
 
 def find_child(pesel):
@@ -24,7 +24,7 @@ def find_child(pesel):
             surname = rows[2]
             date_of_birth = rows[3]
             group = rows[4]
-            result = "PESEL:" + " " + pesel, "IMIĘ :" + " " + name, "NAZWISKO :" + " " + surname, \
+            result = "PESEL :" + " " + pesel, "IMIĘ :" + " " + name, "NAZWISKO :" + " " + surname, \
                      "DATA URODZENIA :" + " " + date_of_birth, "GRUPA PRZEDSZKOLNA :" + " " + group
             return result
 
@@ -179,8 +179,8 @@ def admin():
         session.clear()
         return redirect(url_for('login')), flash('Nie jestes zalogowany!!  Prosze sie wczesniej zalogować')
 
-@app.route('/admin', methods=['POST', 'GET'])
-def admin1():
+@app.route('/search_db', methods=['POST', 'GET'])
+def search_db():
     if session['username'] == 'admin':
         username = session['username']
         if request.method == 'POST':
