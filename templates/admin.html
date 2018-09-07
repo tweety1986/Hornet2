@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% block header %}
+{% if grupa == 'admin' %}
 <div class="nav-side-menu">
     <div class="brand">Brand Logo</div>
     <i class="fa fa-bars fa-2x toggle-btn" data-toggle="collapse" data-target="#menu-content"></i>
@@ -15,7 +16,7 @@
                 </li>
                 <ul class="sub-menu collapse" id="products">
                     <li class="active"><a href="#">CSS3 Animation</a></li>
-                    <li><a href="{{ url_for('search_db') }}">Wyszukaj przedszkolaka</a></li>
+                    <li><a href="{{ url_for('admin1') }}">Wyszukaj przedszkolaka</a></li>
                     <li><a href="#">Buttons</a></li>
                     <li><a href="#">Tabs & Accordions</a></li>
                     <li><a href="#">Typography</a></li>
@@ -54,6 +55,7 @@
             </ul>
      </div>
 </div>
+{% endif %}
 {% endblock %}
 
 {% block body %}

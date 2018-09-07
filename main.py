@@ -89,8 +89,7 @@ def profil():
             data = cursor.fetchall()
         db.commit()
 
-        return render_template("profil.html", data=data, the_title='BAZA PRZEDSZKOLAKA', info=username,
-                               grupa=check_grupa(username))
+        return render_template("profil.html", data=data, the_title='BAZA PRZEDSZKOLAKA', info=username, grupa=check_grupa(username))
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -180,9 +179,8 @@ def admin():
         session.clear()
         return redirect(url_for('login')), flash('Nie jestes zalogowany!!  Prosze sie wczesniej zalogować')
 
-
-@app.route('/search_db', methods=['POST', 'GET'])
-def search_db():
+@app.route('/admin', methods=['POST', 'GET'])
+def admin1():
     if session['username'] == 'admin':
         username = session['username']
         if request.method == 'POST':
@@ -216,4 +214,4 @@ def upload_file():
 
 
 if __name__ == "__main__":
-    app.run(host='0.0.0.0', debug=True, port=8060)
+    app.run(host='0.0.0.0', debug=True, port=8061)
