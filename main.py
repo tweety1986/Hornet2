@@ -12,6 +12,23 @@ app = Flask(__name__)
 app.secret_key = os.urandom(24)
 app.permanent_session_lifetime = timedelta(minutes=5)
 
+
+def find_child(pesel):
+    with sqlite3.connect("static/user.db") as db:
+        cursor = db.cursor()
+        cursor.execute('SELECT * FROM dzieci WHERE person_id = ?', (pesel,))
+        data = cursor.fetchall()
+        for rows in data[:]:
+            pesel = rows[0]
+            name = rows[1]
+            surname = rows[2]
+            date_of_birth = rows[3]
+            group = rows[4]
+            result = "PESEL:" + " " + pesel, "IMIĘ :" + " " + name, "NAZWISKO :" + " " + surname, \
+                     "DATA URODZENIA :" + " " + date_of_birth, "GRUPA PRZEDSZKOLNA :" + " " + group
+            return result
+
+
 def check_grupa(username):
     with sqlite3.connect("static/user.db") as db:
         cur = db.cursor()
@@ -22,6 +39,7 @@ def check_grupa(username):
         db_user = row[2]
         if db_grupa == db_grupa and db_user == username:
             return db_grupa
+
 
 def allowed_file(filename):
     return '.' in filename and \
@@ -56,7 +74,7 @@ def validate(username, password):
 def index():
     if 'username' in session:
         username = session['username']
-        return render_template('base.html', the_title="BAZA PRZEDSZKOLAKA", info=username , grupa=check_grupa(username))
+        return render_template('base.html', the_title="BAZA PRZEDSZKOLAKA", info=username, grupa=check_grupa(username))
     else:
         return render_template('base.html', the_title="BAZA PRZEDSZKOLAKA")
 
@@ -67,18 +85,12 @@ def profil():
         username = session['username']
         with sqlite3.connect("static/user.db") as db:
             cursor = db.cursor()
-            cursor.execute('SELECT pesel, name, surname, birth, grupa FROM dzieci')
+            cursor.execute('SELECT person_id, name, surname, birth, grupa FROM dzieci')
             data = cursor.fetchall()
         db.commit()
 
-        def find_parent(pesel):
-            with sqlite3.connect("static/user.db") as db:
-                cursor = db.cursor()
-                pesel = int(pesel)
-                cursor.execute('SELECT * FROM dzieci WHERE person_id = ?', (pesel,))
-                print(cursor.fetchall())
-
-    return render_template("profil.html", data=data, the_title='BAZA PRZEDSZKOLAKA', info=username, grupa=check_grupa(username) )
+        return render_template("profil.html", data=data, the_title='BAZA PRZEDSZKOLAKA', info=username,
+                               grupa=check_grupa(username))
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -124,7 +136,7 @@ def child():
             cursor.execute(
                 'INSERT INTO dzieci (person_id, name, surname, birth, grupa) VALUES (?, ?, ?, ?, ?)',
                 (
-                    request.form.get('person_id', type=int),
+                    request.form.get('person_id', type=str),
                     request.form.get('name', type=str),
                     request.form.get('surname', type=str),
                     request.form.get('birth', type=str),
@@ -154,7 +166,8 @@ def register():
             )
             db.commit()
             return redirect(url_for('register'))
-        return render_template("register.html", the_title='BAZA PRZEDSZKOLAKA', info=username, grupa=check_grupa(username))
+        return render_template("register.html", the_title='BAZA PRZEDSZKOLAKA', info=username,
+                               grupa=check_grupa(username))
 
 
 @app.route('/admin')
@@ -167,6 +180,20 @@ def admin():
         session.clear()
         return redirect(url_for('login')), flash('Nie jestes zalogowany!!  Prosze sie wczesniej zalogować')
 
+
+@app.route('/search_db', methods=['POST', 'GET'])
+def search_db():
+    if session['username'] == 'admin':
+        username = session['username']
+        if request.method == 'POST':
+            pesel = request.form['person_id']
+            data = find_child(pesel)
+            return render_template('search_db.html', grupa=check_grupa(username), info=username, data=data[::])
+        return render_template('search_db.html', grupa=check_grupa(username), info=username)
+    else:
+        session.pop('username', None)
+        session.clear()
+        return redirect(url_for('login')), flash('Nie jestes zalogowany!!  Prosze sie wczesniej zalogować')
 
 
 @app.route('/upload', methods=['GET', 'POST'])

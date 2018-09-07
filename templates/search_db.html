@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+
 {% block header %}
 <div class="nav-side-menu">
     <div class="brand">Brand Logo</div>
@@ -55,7 +56,40 @@
      </div>
 </div>
 {% endblock %}
-
 {% block body %}
 
+<div class="admin_field">
+  <div class="panel panel-primary">
+            <div class="panel-heading">
+                  <div class="row">
+                      <div class="col-md-6 col-lg-6 colors" align="left">
+                          <p> Karta Przedszkolaka wpisz Pesel aby go wyszukać </p>
+                      </div>
+                      <div class="col-md-6 col-lg-6 " align="right">
+                        <form action="" method="post">
+                            <input class="colors" type="text" placeholder="Search.." name="person_id" value="{{ request.form.person_id }}">
+                            <button type="submit"><i class="fa fa-search"></i></button>
+                        </form>
+                      </div>
+                  </div>
+            </div>
+            <div class="panel-body">
+                  <div class="row">
+                       <div class="col-md-4 col-lg-4 " align="left">
+                             {% for item in data %}
+                                <P> {{item}} </P>
+                          {% endfor %}
+                       </div>
+                      <div class="col-md-4 col-lg-4 " align="left">
+                      </div>
+                      <div class="col-md-4 col-lg-4 " align="left">
+                      </div>
+                      <div class="col-md-4 col-lg-4 " align="left">
+                      </div>
+
+
+                      </div>
+                  </div>
+            </div>
+</div>
 {% endblock %}
