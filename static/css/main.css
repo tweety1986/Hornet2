@@ -21,6 +21,9 @@ header h1.logo {
   text-transform: uppercase;
   float: left;
 }
+header a.logo {
+  color: #fff;
+}
 
 .navbar-header h1 {
   color: #FFFFFF;
@@ -47,11 +50,28 @@ h3 {
 /*
  * Display navigation links inline
  */
+ .admin_field h1 {
+ color: White;
 
+ }
+.admin_field {
+    width: 78%;
+    float: right;
+    margin-right: 1%
+}
 
 .example3 .navbar-brand {
   height: 90px;
 
+}
+
+.colors {
+    color: black;
+}
+
+.colors p {
+    font-size: 20px;
+    color: white;
 }
 
 .example3 .nav >li >a {

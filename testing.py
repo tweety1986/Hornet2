@@ -20,4 +20,13 @@ hash_object = hashlib.md5(b'123')
 
 print(hash_object.hexdigest())
 print(check_password('48c8947f69c054a5caa934674ce8881d02bb18fb59d5a63eeaddff735b0e9801e87294783281ae49fc8287a0fd86779b27d7972d3e84f0fa0d826d7cb67dfefc','123'))
-print(hash_passwd('g11w85lol2Z!'))
+print(hash_passwd(''))
+
+
+def find_child(pesel):
+    with sqlite3.connect("static/user.db") as db:
+        cursor = db.cursor()
+        pesel = int(pesel)
+        cursor.execute ('SELECT * FROM dzieci WHERE person_id = ?', (pesel,))
+        data = cursor.fetchall()
+        return data
