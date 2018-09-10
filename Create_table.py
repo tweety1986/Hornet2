@@ -30,24 +30,24 @@ cursor.execute('''
 #               ''')
 #db.commit()
 
-cursor.execute("SELECT * FROM dzieci")
-print(cursor.fetchall())
+#cursor.execute("SELECT * FROM dzieci")
+#print(cursor.fetchall())
 
 
-#def check_grup(username):
-#    with sqlite3.connect("static/user.db") as db:
-#        cur = db.cursor()
-#    cur.execute("SELECT * FROM users")
-#    rows = cur.fetchall()
-#    for row in rows:
-#        db_grupa = row[1]
-#        db_user = row[2]
-#        db_pass = row[3]
-#        if db_grupa == db_grupa and db_user == username:
-#            return db_grupa
-       # if username == username:
-       #     cursor.execute('SELECT * FROM dzieci WHERE pesel = ?', ('85011118272',))
-       #     print(cursor.fetchall())
+def check_grup(username):
+    with sqlite3.connect("static/user.db") as db:
+        cur = db.cursor()
+    cur.execute("SELECT * FROM users")
+    rows = cur.fetchall()
+    for row in rows:
+        db_grupa = row[1]
+        db_user = row[2]
+        db_pass = row[3]
+        if db_grupa == db_grupa and db_user == username:
+            return db_grupa
+        #if username == username:
+            #cursor.execute('SELECT * FROM users WHERE pesel = ?', ('',))
+            #print(cursor.fetchall())
 
 
 
@@ -62,5 +62,6 @@ def find_child(pesel):
             wynik = result
             print(wynik)
 
-print(find_child('85011118272'))
 #print(check_grup('admin'))
+print(check_grup('haxman'))
+

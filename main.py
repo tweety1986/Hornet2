@@ -89,7 +89,8 @@ def profil():
             data = cursor.fetchall()
         db.commit()
 
-        return render_template("profil.html", data=data, the_title='BAZA PRZEDSZKOLAKA', info=username, grupa=check_grupa(username))
+        return render_template("profil.html", data=data, the_title='BAZA PRZEDSZKOLAKA', info=username,
+                               grupa=check_grupa(username))
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -171,18 +172,19 @@ def register():
 
 @app.route('/admin')
 def admin():
-    if session['username'] == 'admin':
-        username = session['username']
+    username = session['username']
+    if check_grupa(username) == check_grupa('admin'):
         return render_template('admin.html', grupa=check_grupa(username), info=username)
     else:
         session.pop('username', None)
         session.clear()
         return redirect(url_for('login')), flash('Nie jestes zalogowany!!  Prosze sie wczesniej zalogować')
 
+
 @app.route('/search_db', methods=['POST', 'GET'])
 def search_db():
-    if session['username'] == 'admin':
-        username = session['username']
+    username = session['username']
+    if check_grupa(username) == check_grupa('admin'):
         if request.method == 'POST':
             pesel = request.form['person_id']
             data = find_child(pesel)
