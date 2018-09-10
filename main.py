@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for, flash, session
 from werkzeug.utils import secure_filename
 from datetime import timedelta
+
 import sqlite3
 import os
 import hashlib
@@ -10,8 +11,8 @@ ALLOWED_EXTENSIONS = {'txt', 'pdf', 'jpg', 'png', 'jpeg', 'gif', 'doc', 'rar'}
 
 app = Flask(__name__)
 app.secret_key = os.urandom(24)
-app.permanent_session_lifetime = timedelta(minutes=10)
 
+app.permanent_session_lifetime = timedelta(minutes=10)
 
 def find_child(pesel):
     with sqlite3.connect("static/user.db") as db:
@@ -174,7 +175,7 @@ def register():
 def admin():
     username = session['username']
     if check_grupa(username) == check_grupa('admin'):
-        return render_template('admin.html', grupa=check_grupa(username), info=username)
+        return render_template('admin.html', grupa=check_grupa(username))
     else:
         session.pop('username', None)
         session.clear()
@@ -198,8 +199,8 @@ def search_db():
 
 @app.route('/upload', methods=['GET', 'POST'])
 def upload_file():
-    if session['username'] == 'admin':
-        username = session['username']
+    username = session['username']
+    if check_grupa(username) == check_grupa('admin'):
         if request.method == 'POST':
             if 'file' not in request.files:
                 flash('No file part')
@@ -213,6 +214,7 @@ def upload_file():
                 file.save(os.path.join('static/storage', filename))
                 return redirect(url_for('index', filename=filename)), flash('Upload file successfull')
         return render_template('upload.html', info=username, grupa=check_grupa(username))
+
 
 
 if __name__ == "__main__":

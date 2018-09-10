@@ -9,10 +9,10 @@
                       <div class="col-md-6 col-lg-6 colors" align="left">
                           <p> Karta Przedszkolaka wpisz Pesel aby go wyszukać </p>
                       </div>
-                      <div class="col-md-6 col-lg-6 " align="right">
-                        <form action="" method="post">
-                            <input class="colors" type="text" placeholder="Search.." name="person_id" value="{{ request.form.person_id }}">
-                            <button type="submit"><i class="fa fa-search"></i></button>
+                      <div class="col-md-6 col-lg-6" align="right">
+                        <form action="" method="post" class="form-inline">
+                            <input class="colors form-control" type="text" placeholder="Search.." name="person_id" value="{{ request.form.person_id }}" align="left">
+                            <button type="submit" class="btn btn-success"><i class="fa fa-search"></i></button>
                         </form>
                       </div>
                   </div>
@@ -25,7 +25,8 @@
                           {% endfor %}
                        </div>
                       <div class="col-md-4 col-lg-4 " align="left">
-                          <textarea cols="110" rows="5"> wpisz</textarea>
+                          <textarea name= 'uwagi' cols="110" rows="5"> wpisz</textarea>
+                          <button type="submit" class="btn btn-success">Wyslij <i class="fa fa-bell" aria-hidden="true"></i></button>
                       </div>
                       <div class="col-md-4 col-lg-4 " align="left">
                       </div>
