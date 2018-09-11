@@ -10,20 +10,30 @@ ALLOWED_EXTENSIONS = {'txt', 'pdf', 'jpg', 'png', 'jpeg', 'gif', 'doc', 'rar'}
 
 app = Flask(__name__)
 app.secret_key = os.urandom(24)
+
 app.permanent_session_lifetime = timedelta(minutes=10)
 
 
-def find_child(pesel):
+def db_connect():
     with sqlite3.connect("static/user.db") as db:
         cursor = db.cursor()
-        cursor.execute('SELECT * FROM dzieci WHERE person_id = ?', (pesel,))
+        cursor.execute('SELECT * FROM users, dzieci')
         data = cursor.fetchall()
+        return data
+
+def check_username():
+    find = db_connect()
+    return find
+
+
+def find_child(pesel):
+        data = db_connect()
         for rows in data[:]:
-            pesel = rows[0]
-            name = rows[1]
-            surname = rows[2]
-            date_of_birth = rows[3]
-            group = rows[4]
+            pesel = rows[5]
+            name = rows[6]
+            surname = rows[7]
+            date_of_birth = rows[8]
+            group = rows[9]
             result = "PESEL :" + " " + pesel, "IMIĘ :" + " " + name, "NAZWISKO :" + " " + surname, \
                      "DATA URODZENIA :" + " " + date_of_birth, "GRUPA PRZEDSZKOLNA :" + " " + group
             return result
@@ -47,12 +57,12 @@ def allowed_file(filename):
 
 
 def hash_passwd(hashed_password):
-    hash_pass = hashlib.sha3_512(hashed_password.encode()).hexdigest()
+    hash_pass = hashlib.sha224(hashed_password.encode()).hexdigest()
     return hash_pass
 
 
 def check_password(hashed_password, user_password):
-    return hashed_password == hashlib.sha3_512(user_password.encode()).hexdigest()
+    return hashed_password == hashlib.sha224(user_password.encode()).hexdigest()
 
 
 def validate(username, password):
@@ -150,8 +160,8 @@ def child():
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
-    if session['username'] == 'admin':
-        username = session['username']
+    username = session['username']
+    if check_grupa(username) == check_grupa('admin'):
         if request.method == 'POST':
             with sqlite3.connect("static/user.db") as db:
                 cursor = db.cursor()
@@ -198,8 +208,8 @@ def search_db():
 
 @app.route('/upload', methods=['GET', 'POST'])
 def upload_file():
-    if session['username'] == 'admin':
-        username = session['username']
+    username = session['username']
+    if check_grupa(username) == check_grupa('admin'):
         if request.method == 'POST':
             if 'file' not in request.files:
                 flash('No file part')
@@ -215,5 +225,20 @@ def upload_file():
         return render_template('upload.html', info=username, grupa=check_grupa(username))
 
 
+@app.route('/check_users', methods=['POST','GET'])
+def check_user():
+    if 'username' in session:
+        username = session['username']
+        data = check_username()
+        return render_template('check_users.html', grupa=check_grupa(username), info=username, data=data)
+    else:
+        return render_template('check_users.html',)
+
+
 if __name__ == "__main__":
     app.run(host='0.0.0.0', debug=True, port=8061)
+
+#check_username()
+
+print(check_username())
+print(find_child(85011118272))

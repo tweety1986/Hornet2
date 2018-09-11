@@ -23,7 +23,7 @@ cursor.execute('''
                 ''')
 
 def hash_passwd(hashed_password):
-    hash_pass = hashlib.sha3_512(hashed_password.encode()).hexdigest()
+    hash_pass = hashlib.sha224(hashed_password.encode()).hexdigest()
     return hash_pass
 
 def create_admin():

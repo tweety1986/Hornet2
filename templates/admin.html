@@ -11,10 +11,10 @@
                   </a>
                 </li>
                 <li  data-toggle="collapse" data-target="#products" class="collapsed active">
-                  <a href="#"><i class="fa fa-gift fa-lg"></i> UI Elements <span class="arrow"></span></a>
+                  <a href="#"><i class="fa fa-gift fa-lg"></i> Narzędzia administracyjne <span class="arrow"></span></a>
                 </li>
                 <ul class="sub-menu collapse" id="products">
-                    <li class="active"><a href="#">CSS3 Animation</a></li>
+                    <li class="active"><a href="{{ url_for('check_user') }}">Baza użytkowników</a></li>
                     <li><a href="{{ url_for('search_db') }}">Wyszukaj przedszkolaka</a></li>
                     <li><a href="#">Buttons</a></li>
                     <li><a href="#">Tabs & Accordions</a></li>
@@ -48,7 +48,7 @@
                   </li>
                  <li>
                   <a href="#">
-                  <i class="fa fa-users fa-lg"></i> Users
+                  <i class="fa fa-users fa-lg"></i> User {{info}}
                   </a>
                 </li>
             </ul>

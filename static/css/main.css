@@ -24,7 +24,10 @@ header h1.logo {
 header a.logo {
   color: #fff;
 }
-
+ul {
+  list-style-type:none;
+  margin: 0;
+}
 .navbar-header h1 {
   color: #FFFFFF;
   text-decoration: none;
@@ -73,7 +76,6 @@ h3 {
     font-size: 20px;
     color: white;
 }
-
 .example3 .nav >li >a {
   padding-top: 30px;
   padding-bottom: 30px;
